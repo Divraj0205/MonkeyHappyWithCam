@@ -18,9 +18,9 @@ jungleimg=loadImage("jungle.jpg");
 }
 
 function setup() {
-  createCanvas(500, 300, WEBGL);
+  createCanvas(500, 300);
   PLAY=1;
-  END=0;
+  OVER=0;
   gamestate=PLAY;
   jungle=createSprite(300,100,5,3);
   jungle.addImage("jungle1",jungleimg);
@@ -34,17 +34,24 @@ function setup() {
   monkey.scale=0.1;
   //monkey.debug=true;
   
-  ground=createSprite(250,300,500,4);
+  ground=createSprite(250,300,50000000000000000000000000,4);
   //ground.visible=false;
   
   bananas=createGroup();
   stones=createGroup();
 
-  gameCam=createCamera();
+  //gameCam=createCamera();
 
-  camera.on();
+  /*camera.on();
   //camera(0,0,0,width/2,height/2,0,0,0,0);
-  gameCam.move(20,0,0);
+  gameCam.move(20,0,0);*/
+  camera.position.x=width/2;
+  camera.position.y=height/2;
+  //camera.position.z=-50;
+
+  scoreX=400;
+
+  
   
   score=0;
   score.depth=score.depth+1;
@@ -57,14 +64,14 @@ function draw() {
 
    jungle.velocityX=7;
   
-   
-  /*if(jungle.x<0){
-  jungle.x=jungle.x+jungle.width*4;
-  }*/
-  
-  
   if(gamestate===PLAY){
     //jungle.velocityX=-7;
+
+    if(monkey.x>=495){
+      ground.x=ground.x+250;
+    }
+
+    camera.position.x=camera.position.x+7;
     if(score===score+10){
       monkey.scale=monkey.scale+0.02;
     }
@@ -136,13 +143,14 @@ function draw() {
   //console.log(monkey.y);
   monkey.velocityY=monkey.velocityY+0.8; 
   monkey.collide(ground);
-  
+        
+  scoreX=scoreX+7;
   
   stroke("white");
   textSize(20);
   fill("white");
-  text("Score: "+score,400,40);
-  if (gamestate===END){
+  text("Score: "+score,scoreX,40);
+  if (gamestate===OVER){
     stones.setVelocityXEach(0);
     bananas.setVelocityXEach(0);
     jungle.velocityX=0;
@@ -165,7 +173,7 @@ function spawnbanana(){
  if(frameCount%200===0){
    var x=550;
    var x=+150;
-   banana = createSprite(550,random(130,260),20,20); 
+   banana = createSprite(x,random(130,260),20,20); 
    banana.addImage("banana",bananaimg);
    banana.velocityX=0;
    banana.scale=0.05;
@@ -176,15 +184,17 @@ function spawnbanana(){
 
 function spawnstones(){
   if(World.frameCount%140===0){ 
-    var x=530;
-    x=x+200;
-    var stone=createSprite(x,270,20,20);
+    var posXX=530;
+    posXX=posXX+200;
+    var stone=createSprite(posXX,270,20,20);
+    //stone.x=x;
     //giving the properties to the stone
     stone.addImage(stoneimg);
-    stone.velocityX=0;
+    stone.velocityX=-7;
     stone.scale=0.15;
     stone.lifetime=150;
     stones.add(stone);
+    stone.depth=stone.depth-2;
     //stone.debug=true;
     stone.setCollider("rectangle",0,0,300,100);
   }
